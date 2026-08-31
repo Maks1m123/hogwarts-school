@@ -34,4 +34,7 @@
         public List<Faculty> findByColor(String color) {
             return facultyRepository.findByColor(color);
         }
+        public List<Faculty> findByNameOrColor (String nameOrColor) {
+            return facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(nameOrColor,nameOrColor);
+        }
     }
