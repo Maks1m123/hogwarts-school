@@ -19,7 +19,7 @@ public class AvatarService {
     private final AvatarRepository avatarRepository;
     private final StudentRepository studentRepository;
 
-    @Value("${path.to.avatars.folder}") // или просто указать строку
+    @Value("${path.to.avatars.folder}")
     private String avatarsDir;
 
     @Autowired

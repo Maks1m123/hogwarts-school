@@ -13,7 +13,7 @@ public class Faculty {
     private String name;
     private String color;
 
-    public Faculty() {
+    public Faculty(Long facultyId, String грифиндор, String зеленый) {
     }
 
     public Faculty(String color, Long id, String name) {
