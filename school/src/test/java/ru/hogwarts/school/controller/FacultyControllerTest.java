@@ -4,6 +4,7 @@ package ru.hogwarts.school.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -15,6 +16,7 @@ import ru.hogwarts.school.model.Faculty;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 public class FacultyControllerTest {
 
 
@@ -35,13 +37,22 @@ public class FacultyControllerTest {
     @Test
     public void testPutFaculty() {
 
-        Long facultyId = 1L;
-        Faculty newFacultyInfo = new Faculty(facultyId,"Грифиндор","Зеленый");
+        // создать факультет, чтобы получить реальный id из БД
+        ResponseEntity<Faculty> createResponse = restTemplate.postForEntity(
+                getUrl(), new Faculty("Грифиндор", "Красный"), Faculty.class);
+
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(createResponse.getBody()).isNotNull();
+        Long facultyId = createResponse.getBody().getId();
+        assertThat(facultyId).isNotNull();
+
+        // обновить созданный факультет
+        Faculty newFacultyInfo = new Faculty(facultyId, "Грифиндор", "Зеленый");
 
         HttpEntity<Faculty> requestEntity = new HttpEntity<>(newFacultyInfo);
 
         ResponseEntity<Faculty> response = restTemplate.exchange(
-                getUrl()+"/"+facultyId, HttpMethod.PUT,requestEntity, Faculty.class);
+                getUrl()+"/"+facultyId, HttpMethod.PUT, requestEntity, Faculty.class);
 
         assertThat(response).isNotNull();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
