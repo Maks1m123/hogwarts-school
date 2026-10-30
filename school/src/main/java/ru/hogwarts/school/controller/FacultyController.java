@@ -3,17 +3,21 @@ package ru.hogwarts.school.controller;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
 @RequestMapping("/faculty")
 public class FacultyController {
     private final FacultyService facultyService;
+    private final FacultyRepository facultyRepository;
 
-    public FacultyController(FacultyService facultyService) {
+    public FacultyController(FacultyService facultyService, FacultyRepository facultyRepository) {
         this.facultyService = facultyService;
+        this.facultyRepository = facultyRepository;
     }
 
     @PostMapping
@@ -46,6 +50,15 @@ public class FacultyController {
     @GetMapping("/{id}/students")
     public List<Student> getStudents(@PathVariable long id){
         return facultyService.findFaculty(id).getStudents();
+    }
+
+    @GetMapping("/longest-name")
+    public String getLongestFacultyName(){
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .filter(name -> name !=null)
+                .max(Comparator.comparingInt(String::length))
+                .orElse(null);
     }
 }
 

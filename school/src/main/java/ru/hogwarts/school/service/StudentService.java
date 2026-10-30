@@ -38,5 +38,14 @@ public class StudentService {
      }
      public List<Student> findByAgeBetween(int min, int max){return studentRepository.findByAgeBetween(min,max);}
 
+    public List<String> getAllStudentsNameStringA(){
+        return studentRepository.findAll().stream()
+                .map(Student::getName)
+                .filter(name -> name != null && (name.startsWith("А") ))
+                .map(String::toUpperCase)
+                .sorted()
+                .toList();
+    }
+
 
 }
