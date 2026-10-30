@@ -78,6 +78,74 @@ public class StudentController {
                 .average()
                 .orElse(0.0);
     }
+    @GetMapping("/print-parallel")
+    public void printStudentsParallel(){
+        List<Student> students = studentRepository.findAll();
+        if(students.isEmpty()){
+            return;
+        }
+        if(students.size() > 0){
+            System.out.println(students.get(0).getName());
+        }
+        if (students.size() > 1){
+            System.out.println(students.get(1).getName());
+        }
+        Thread thread1 = new Thread(()->{
+            if(students.size() > 2){
+                System.out.println(students.get(2).getName());
+            }
+            if(students.size() > 3){
+                System.out.println(students.get(3).getName());
+            }
+        });
+        thread1.start();
+        Thread thread2 = new Thread(()->{
+            if(students.size() > 4){
+                System.out.println(students.get(4).getName());
+            }
+            if(students.size() > 5){
+                System.out.println(students.get(5).getName());
+            }
+        });
+        thread2.start();
+    }
+    private synchronized void printStudentName(Student student) {
+        if (student != null) {
+            System.out.println(student.getName());
+        }
+    }
+    @GetMapping("/print-synchronized")
+    public void printSynchronizedStudents(){
+        List<Student> students = studentRepository.findAll();
+        if(students.isEmpty()){
+            return;
+        }
+        if(students.size() > 0){
+            printStudentName(students.get(0));
+        }
+        if(students.size() > 1){
+            printStudentName(students.get(1));
+        }
+        Thread thread1 = new Thread(()->{
+            if(students.size() > 2){
+                printStudentName(students.get(2));
+            }
+            if(students.size() > 3){
+                printStudentName(students.get(3));
+            }
+        });
+        thread1.start();
+        Thread thread2 = new Thread(()->{
+            if(students.size() > 4){
+                printStudentName(students.get(4));
+            }
+            if(students.size() > 5){
+                printStudentName(students.get(5));
+            }
+        });
+        thread2.start();
+    }
+
 
     @GetMapping("/sum")
     public long getSum() {
